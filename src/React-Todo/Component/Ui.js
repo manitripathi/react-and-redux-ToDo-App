@@ -3,6 +3,9 @@ import React, { useState } from 'react'
 const TodoUI=()=>{
     const [inputValue, setInputValue] = useState("");
     const[list,setList]=useState([])
+    const[displayEditButton,setDisplayEditButton]=useState(false)
+    const[editList,setEditList]=useState('')
+
     const onClickAddButton=()=>{
         setList([...list,inputValue])
         setInputValue("")
@@ -19,6 +22,26 @@ const TodoUI=()=>{
         setList([])
     }
 
+    const handleEditButton =(index)=>{
+   let editData= list.find((items,id)=>{
+          return id===index
+      })
+      setEditList({id:index,value:editData})
+      setInputValue(editData)
+      setDisplayEditButton(true)
+    }
+
+    const onClickEditButton=(index)=>{
+      setList(list.map((item,id)=>{
+        
+            if( id===editList.id){
+              console.log(id,editList.id);
+              return inputValue
+            }
+            return item
+        }))
+    }
+
     return(
         <>
       <div className="App">
@@ -32,14 +55,25 @@ const TodoUI=()=>{
               className="form-control"
               placeholder="Add Items Here..."
               value={inputValue}
-              onChange={(e)=>setInputValue(e.target.value)}
+              onChange={(e)=>{return setInputValue(e.target.value)}}
             />
+            {displayEditButton ? 
+             <i className='fas fa-edit' 
+             style={{ color: "black",padding:'4px' }}
+            //  id={index}
+             onClick={()=>{return (onClickEditButton(),
+               setDisplayEditButton(false)
+              )}}
+            ></i>
+            :      
             <i
               className="fa fa-plus"
               style={{ color: "black", fontSize: "30px", margin: "4px" }}
               aria-hidden="true"
               onClick={(e)=>onClickAddButton(e)}
-            ></i>
+            ></i>     
+          }
+           
           </div>
           <div className="card bg-success text-white">
             <div className="card-body">
@@ -48,8 +82,13 @@ const TodoUI=()=>{
                   <div className="todo-list-card-body-content-wrapper" key={index}>
                    <div>{item}</div>
                    <div>
+                   <i className='fas fa-edit' 
+                    style={{ color: "white",padding:'4px' }}
+                    id={index}
+                    onClick={()=>handleEditButton(index)}
+                   ></i>
                 <i className="fas fa-trash-alt" 
-                style={{ color: "red" }}
+                style={{ color: "red",padding:'4px' }}
                 id={index}
                 onClick={()=>handleDeleteButton(index)}
                 ></i>
